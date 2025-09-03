@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --warning: #fca311;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --background: #ffffff;
+            --card-bg: #ffffff;
+            --text: #333333;
+            --border: #dee2e6;
+        }
+
+        .dark-mode {
+            --primary: #4cc9f0;
+            --secondary: #4361ee;
+            --background: #121212;
+            --card-bg: #1e1e1e;
+            --text: #f8f9fa;
+            --border: #343a40;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo i {
+            margin-right: 10px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 20px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        nav ul li a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .auth-section {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-info {
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background-color: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            margin-left: 15px;
+        }
+
+        .main-content {
+            padding: 2rem 0;
+            min-height: 70vh;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 1rem;
+            background-color: var(--card-bg);
+            color: var(--text);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 1rem;
+            background-color: var(--card-bg);
+            color: var(--text);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .table th, .table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .table th {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .table tr:hover {
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .edit-btn {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .delete-btn {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 4px;
+            color: white;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: opacity 0.3s, transform 0.3s;
+        }
+
+        .notification.success {
+            background-color: var(--success);
+        }
+
+        .notification.error {
+            background-color: var(--danger);
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .view-section {
+            display: none;
+        }
+
+        .view-section.active {
+            display: block;
+        }
+
+        .role-badge {
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .role-admin {
+            background-color: rgba(247, 37, 133, 0.2);
+            color: var(--danger);
+        }
+
+        .role-viewer {
+            background-color: rgba(76, 201, 240, 0.2);
+            color: var(--success);
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal.hidden {
+            display: none;
+        }
+
+        .modal-content {
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: var(--gray);
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            nav ul {
+                margin-top: 15px;
+                justify-content: center;
+            }
+            
+            .auth-section {
+                margin-top: 15px;
+                flex-direction: column;
+            }
+            
+            .user-info {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+            
+            .table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-users-cog"></i>
+                    <span>User Management</span>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="#" onclick="showView('login')">Connexion</a></li>
+                        <li><a href="#" onclick="showView('register')">Inscription</a></li>
+                        <li><a href="#" onclick="showView('users')">Utilisateurs</a></li>
+                    </ul>
+                </nav>
+                <div class="auth-section">
+                    <div class="user-info hidden" id="userInfo">
+                        <div class="user-avatar" id="userAvatar">U</div>
+                        <span id="userName">Utilisateur</span>
+                    </div>
+                    <button class="btn btn-outline hidden" id="logoutBtn">Déconnexion</button>
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container main-content">
+        <!-- Login Section -->
+        <div class="view-section active" id="loginView">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Connexion</h2>
+                </div>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginEmail" class="form-label">Email</label>
+                        <input type="email" id="loginEmail" class="form-input" placeholder="Votre email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword" class="form-label">Mot de passe</label>
+                        <input type="password" id="loginPassword" class="form-input" placeholder="Votre mot de passe" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Se connecter</button>
+                </form>
+                <div style="margin-top: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 4px;">
+                    <p style="margin: 0; font-size: 0.9rem; color: #6c757d;">
+                        <strong>Compte de test :</strong><br>
+                        Email: admin@example.com<br>
+                        Mot de passe: admin123
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Register Section -->
+        <div class="view-section" id="registerView">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Inscription</h2>
+                </div>
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="registerName" class="form-label">Nom complet</label>
+                        <input type="text" id="registerName" class="form-input" placeholder="Votre nom" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail" class="form-label">Email</label>
+                        <input type="email" id="registerEmail" class="form-input" placeholder="Votre email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPassword" class="form-label">Mot de passe</label>
+                        <input type="password" id="registerPassword" class="form-input" placeholder="Créez un mot de passe" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerRole" class="form-label">Rôle</label>
+                        <select id="registerRole" class="form-select">
+                            <option value="viewer">Viewer</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">S'inscrire</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Users Management Section -->
+        <div class="view-section" id="usersView">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Gestion des Utilisateurs</h2>
+                    <button class="btn btn-primary" id="addUserBtn">Ajouter un utilisateur</button>
+                </div>
+                <div id="usersTableContainer">
+                    <div class="loading" id="usersLoading">Chargement des utilisateurs...</div>
+                    <table class="table" id="usersTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nom</th>
+                                <th>Email</th>
+                                <th>Rôle</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <!-- Users will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add/Edit User Modal -->
+        <div class="modal hidden" id="userModal">
+            <div class="modal-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title" id="modalTitle">Ajouter un utilisateur</h2>
+                        <button class="btn btn-outline" id="closeModal">X</button>
+                    </div>
+                    <form id="userForm">
+                        <input type="hidden" id="userId">
+                        <div class="form-group">
+                            <label for="userName" class="form-label">Nom complet</label>
+                            <input type="text" id="userName" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="userEmail" class="form-label">Email</label>
+                            <input type="email" id="userEmail" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="userPassword" class="form-label">Mot de passe (laisser vide pour ne pas modifier)</label>
+                            <input type="password" id="userPassword" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="userRole" class="form-label">Rôle</label>
+                            <select id="userRole" class="form-select">
+                                <option value="viewer">Viewer</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary" id="saveUserBtn">Enregistrer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification"></div>
+
+    <script>
+        // Configuration
+        const API_BASE_URL = 'http://localhost:2220/api';
+        let currentUser = null;
+        let authToken = localStorage.getItem('authToken');
+
+        // DOM Elements
+        const loginView = document.getElementById('loginView');
+        const registerView = document.getElementById('registerView');
+        const usersView = document.getElementById('usersView');
+        const userInfo = document.getElementById('userInfo');
+        const userName = document.getElementById('userName');
+        const userAvatar = document.getElementById('userAvatar');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const themeToggle = document.getElementById('themeToggle');
+        const usersTableBody = document.getElementById('usersTableBody');
+        const usersTable = document.getElementById('usersTable');
+        const usersLoading = document.getElementById('usersLoading');
+        const userModal = document.getElementById('userModal');
+        const notification = document.getElementById('notification');
+
+        // Event Listeners
+        document.getElementById('loginForm').addEventListener('submit', handleLogin);
+        document.getElementById('registerForm').addEventListener('submit', handleRegister);
+        logoutBtn.addEventListener('click', handleLogout);
+        themeToggle.addEventListener('click', toggleTheme);
+        document.getElementById('addUserBtn').addEventListener('click', () => openUserModal());
+        document.getElementById('closeModal').addEventListener('click', closeUserModal);
+        document.getElementById('userForm').addEventListener('submit', handleUserSave);
+
+        // Initialize the app
+        function initApp() {
+            console.log('Initializing app...');
+            
+            // Check if we have a token and validate it
+            if (authToken) {
+                console.log('Token found, validating...');
+                validateToken();
+            } else {
+                console.log('No token found, showing login');
+                showView('login');
+            }
+
+            // Check for saved theme preference
+            if (localStorage.getItem('darkMode') === 'enabled') {
+                document.body.classList.add('dark-mode');
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            }
+        }
+
+        // Show notification
+        function showNotification(message, type = 'success') {
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // API Request function
+        async function apiRequest(url, options = {}) {
+            try {
+                // Prepare headers
+                const headers = {
+                    'Content-Type': 'application/json',
+                    ...options.headers
+                };
+                
+                // Add authentication token if it exists
+                if (authToken) {
+                    headers['Authorization'] = `Bearer ${authToken}`;
+                }
+
+                const response = await fetch(`${API_BASE_URL}${url}`, {
+                    headers,
+                    ...options
+                });
+                
+                if (response.status === 401) {
+                    // Unauthorized - token might be expired
+                    handleLogout();
+                    throw new Error('Session expirée. Veuillez vous reconnecter.');
+                }
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    let errorData;
+                    try {
+                        errorData = JSON.parse(errorText);
+                    } catch (e) {
+                        errorData = { error: errorText || `Erreur API: ${response.status}` };
+                    }
+                    throw new Error(errorData.error || errorData.message || `Erreur API: ${response.status}`);
+                }
+                
+                // For responses with no content (like DELETE)
+                if (response.status === 204) {
+                    return null;
+                }
+                
+                return await response.json();
+            } catch (error) {
+                console.error('API Request Error:', error);
+                throw error;
+            }
+        }
+
+        // Handle login
+        async function handleLogin(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            try {
+                const data = await apiRequest('/auth/login', {
+                    method: 'POST',
+                    body: JSON.stringify({ email, password })
+                });
+                
+                authToken = data.token;
+                localStorage.setItem('authToken', authToken);
+                currentUser = data.user;
+                
+                updateUIAfterAuth();
+                showView('users');
+                showNotification('Connexion réussie!');
+            } catch (error) {
+                showNotification(error.message || 'Erreur de connexion: email ou mot de passe incorrect', 'error');
+            }
+        }
+
+        // Handle register
+        async function handleRegister(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const role = document.getElementById('registerRole').value;
+            
+            try {
+                await apiRequest('/auth/register', {
+                    method: 'POST',
+                    body: JSON.stringify({ name, email, password, role })
+                });
+                
+                showNotification('Inscription réussie! Vous pouvez maintenant vous connecter.');
+                showView('login');
+                document.getElementById('registerForm').reset();
+            } catch (error) {
+                showNotification(error.message || "Erreur lors de l'inscription", 'error');
+            }
+        }
+
+        // Handle logout
+        function handleLogout() {
+            authToken = null;
+            currentUser = null;
+            localStorage.removeItem('authToken');
+            
+            userInfo.classList.add('hidden');
+            logoutBtn.classList.add('hidden');
+            showView('login');
+            showNotification('Déconnexion réussie');
+        }
+
+        // Validate token and get user info
+        async function validateToken() {
+            try {
+                // Try to fetch users to validate the token
+                await apiRequest('/users');
+                
+                // If we get here, the token is valid
+                // For simplicity, we'll just set a generic user
+                currentUser = { name: 'Utilisateur', role: 'admin' };
+                updateUIAfterAuth();
+                showView('users');
+            } catch (error) {
+                // Token is invalid
+                localStorage.removeItem('authToken');
+                authToken = null;
+                showView('login');
+                showNotification('Session expirée. Veuillez vous reconnecter.', 'error');
+            }
+        }
+
+        // Update UI after authentication
+        function updateUIAfterAuth() {
+            if (currentUser) {
+                userInfo.classList.remove('hidden');
+                logoutBtn.classList.remove('hidden');
+                
+                userName.textContent = currentUser.name;
+                userAvatar.textContent = currentUser.name.charAt(0).toUpperCase();
+            }
+        }
+
+        // Show a specific view
+        function showView(viewName) {
+            console.log('Showing view:', viewName);
+            
+            // Hide all views
+            document.querySelectorAll('.view-section').forEach(view => {
+                view.classList.remove('active');
+            });
+            
+            // Show the requested view
+            const viewElement = document.getElementById(`${viewName}View`);
+            if (viewElement) {
+                viewElement.classList.add('active');
+            }
+            
+            // If showing users view, load the users
+            if (viewName === 'users' && authToken) {
+                loadUsers();
+            }
+        }
+
+        // Load users from API
+        async function loadUsers() {
+            try {
+                usersLoading.classList.remove('hidden');
+                usersTable.classList.add('hidden');
+                
+                const users = await apiRequest('/users');
+                
+                usersTableBody.innerHTML = '';
+                
+                if (users.length === 0) {
+                    usersTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Aucun utilisateur trouvé</td></tr>';
+                } else {
+                    users.forEach(user => {
+                        const tr = document.createElement('tr');
+                        
+                        const roleClass = user.role === 'admin' ? 'role-admin' : 'role-viewer';
+                        
+                        // Escape values to prevent errors
+                        const safeName = user.name ? user.name.replace(/'/g, "\\'") : '';
+                        const safeEmail = user.email ? user.email.replace(/'/g, "\\'") : '';
+                        const safeRole = user.role ? user.role.replace(/'/g, "\\'") : '';
+                        
+                        tr.innerHTML = `
+                            <td>${user.id}</td>
+                            <td>${safeName}</td>
+                            <td>${safeEmail}</td>
+                            <td><span class="role-badge ${roleClass}">${safeRole}</span></td>
+                            <td class="action-buttons">
+                                <button class="action-btn edit-btn" data-id="${user.id}" data-name="${safeName}" data-email="${safeEmail}" data-role="${safeRole}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="action-btn delete-btn" data-id="${user.id}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        `;
+                        
+                        usersTableBody.appendChild(tr);
+                    });
+                    
+                    // Add event listeners to action buttons
+                    document.querySelectorAll('.edit-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const id = this.getAttribute('data-id');
+                            const name = this.getAttribute('data-name');
+                            const email = this.getAttribute('data-email');
+                            const role = this.getAttribute('data-role');
+                            editUser(id, name, email, role);
+                        });
+                    });
+                    
+                    document.querySelectorAll('.delete-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const id = this.getAttribute('data-id');
+                            deleteUser(id);
+                        });
+                    });
+                }
+                
+                usersLoading.classList.add('hidden');
+                usersTable.classList.remove('hidden');
+            } catch (error) {
+                usersLoading.classList.add('hidden');
+                showNotification(error.message || 'Erreur lors du chargement des utilisateurs', 'error');
+            }
+        }
+
+        // Open user modal for adding/editing
+        function openUserModal(user = null) {
+            const modalTitle = document.getElementById('modalTitle');
+            const userId = document.getElementById('userId');
+            const userNameInput = document.getElementById('userName');
+            const userEmail = document.getElementById('userEmail');
+            const userPassword = document.getElementById('userPassword');
+            const userRole = document.getElementById('userRole');
+            
+            if (user) {
+                // Editing existing user
+                modalTitle.textContent = 'Modifier l\'utilisateur';
+                userId.value = user.id;
+                userNameInput.value = user.name;
+                userEmail.value = user.email;
+                userPassword.placeholder = "Laisser vide pour ne pas modifier";
+                userPassword.required = false;
+                userRole.value = user.role;
+            } else {
+                // Adding new user
+                modalTitle.textContent = 'Ajouter un utilisateur';
+                userId.value = '';
+                userNameInput.value = '';
+                userEmail.value = '';
+                userPassword.placeholder = "Mot de passe";
+                userPassword.required = true;
+                userRole.value = 'viewer';
+            }
+            
+            userModal.classList.remove('hidden');
+        }
+
+        // Close user modal
+        function closeUserModal() {
+            userModal.classList.add('hidden');
+            document.getElementById('userForm').reset();
+        }
+
+        // Handle user save (add or edit)
+        async function handleUserSave(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('userId').value;
+            const name = document.getElementById('userName').value;
+            const email = document.getElementById('userEmail').value;
+            const password = document.getElementById('userPassword').value;
+            const role = document.getElementById('userRole').value;
+            
+            try {
+                if (id) {
+                    // Update existing user
+                    const updateData = { name, email, role };
+                    if (password) {
+                        updateData.password = password;
+                    }
+                    
+                    await apiRequest(`/users/${id}`, {
+                        method: 'PUT',
+                        body: JSON.stringify(updateData)
+                    });
+                    
+                    showNotification('Utilisateur modifié avec succès');
+                } else {
+                    // Create new user
+                    await apiRequest('/users', {
+                        method: 'POST',
+                        body: JSON.stringify({ name, email, password, role })
+                    });
+                    
+                    showNotification('Utilisateur créé avec succès');
+                }
+                
+                closeUserModal();
+                loadUsers();
+            } catch (error) {
+                showNotification(error.message || 'Erreur lors de la sauvegarde de l\'utilisateur', 'error');
+            }
+        }
+
+        // Edit user
+        function editUser(id, name, email, role) {
+            openUserModal({ id, name, email, role });
+        }
+
+        // Delete user
+        async function deleteUser(id) {
+            if (!confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')) {
+                return;
+            }
+            
+            try {
+                await apiRequest(`/users/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                showNotification('Utilisateur supprimé avec succès');
+                loadUsers();
+            } catch (error) {
+                showNotification(error.message || 'Erreur lors de la suppression de l\'utilisateur', 'error');
+            }
+        }
+
+        // Toggle theme (light/dark mode)
+        function toggleTheme() {
+            if (document.body.classList.contains('dark-mode')) {
+                document.body.classList.remove('dark-mode');
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                localStorage.setItem('darkMode', 'disabled');
+            } else {
+                document.body.classList.add('dark-mode');
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                localStorage.setItem('darkMode', 'enabled');
+            }
+        }
+
+        // Initialize the app
+        initApp();
+    </script>
+</body>
+</html>

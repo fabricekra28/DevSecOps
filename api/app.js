@@ -20,6 +20,12 @@ app.use(bodyParser.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 
+// Debug Route
+app.get('/hello', (req, res) =>  {
+  res.send('Hello');
+
+});
+
 // Function to wait until MySQL is ready
 const waitForDb = async (retries = 30, delay = 2000) => {
   while (retries > 0) {
