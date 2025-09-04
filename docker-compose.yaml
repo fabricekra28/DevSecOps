@@ -8,22 +8,14 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: Aditya
       MYSQL_DATABASE: crud_app
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: Aditya
     volumes:
       - mysql-data:/var/lib/mysql
       - ./mysql-init:/docker-entrypoint-initdb.d
     ports:
       - "3306:3306"
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
 
   backend:
-    image: fabrice28/backend:latest
+    build: ./api
     container_name: backend-api
     environment:
       DB_HOST: mysql
@@ -33,27 +25,17 @@ services:
       JWT_SECRET: devopsShackSuperSecretKey
       RESET_ADMIN_PASS: 'true'
     depends_on:
-      mysql:
-        condition: service_healthy
+      - mysql
     ports:
       - "5000:5000"
-    restart: always
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5000/health"]
-      interval: 30s
-      timeout: 5s
-      retries: 5
-      start_period: 20s
 
   frontend:
-    image: fabrice28/frontend:latest
+    build: ./client1
     container_name: frontend-react
     ports:
       - "3000:3000"
     depends_on:
-      backend:
-        condition: service_healthy
-    restart: always
+      - backend
 
 volumes:
   mysql-data:
