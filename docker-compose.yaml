@@ -8,18 +8,22 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: Aditya
       MYSQL_DATABASE: crud_app
+      MYSQL_USER: root
+      MYSQL_PASSWORD: Aditya
     volumes:
       - mysql-data:/var/lib/mysql
       - ./mysql-init:/docker-entrypoint-initdb.d
     ports:
       - "3306:3306"
+    networks:
+      - devops-net
 
   backend:
     build: ./api
     container_name: backend-api
     environment:
       DB_HOST: mysql
-      DB_USER: admin
+      DB_USER: root
       DB_PASSWORD: Aditya
       DB_NAME: crud_app
       JWT_SECRET: devopsShackSuperSecretKey
@@ -28,6 +32,8 @@ services:
       - mysql
     ports:
       - "5000:5000"
+    networks:
+      - devops-net
 
   frontend:
     build: ./client1
@@ -39,3 +45,7 @@ services:
 
 volumes:
   mysql-data:
+
+networks:
+  devops-net:                                # ✅ Réseau commun
+    driver: bridge
