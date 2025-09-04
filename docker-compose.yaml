@@ -8,8 +8,6 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: Aditya
       MYSQL_DATABASE: crud_app
-      MYSQL_USER: root
-      MYSQL_PASSWORD: Aditya
     volumes:
       - mysql-data:/var/lib/mysql
       - ./mysql-init:/docker-entrypoint-initdb.d
